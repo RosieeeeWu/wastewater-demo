@@ -1,0 +1,171 @@
+
+<style>
+  .demo-wrap { padding: 1.5rem 0; font-family: var(--font-sans); }
+  .section-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem; margin-bottom: 1rem; }
+  .label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .slider-label { font-size: 14px; color: var(--color-text-secondary); }
+  .slider-val { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+  input[type=range] { width: 100%; margin-bottom: 1rem; }
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 12px; margin-bottom: 1rem; }
+  .metric { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 1rem; text-align: center; }
+  .metric-label { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 4px; }
+  .metric-value { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+  .status-box { border-radius: var(--border-radius-md); padding: 0.75rem 1rem; text-align: center; font-size: 15px; font-weight: 500; margin-bottom: 1rem; transition: all 0.3s; }
+  .bar-track { background: var(--color-background-secondary); border-radius: 99px; height: 14px; overflow: hidden; margin-bottom: 0.5rem; }
+  .bar-fill { height: 100%; border-radius: 99px; transition: width 0.35s, background 0.35s; }
+  .bar-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--color-text-secondary); }
+  .stage-row { display: flex; gap: 8px; margin-top: 1rem; }
+  .stage { flex: 1; border-radius: var(--border-radius-md); padding: 10px 6px; text-align: center; font-size: 12px; border: 0.5px solid var(--color-border-tertiary); transition: background 0.3s, border-color 0.3s; }
+  .stage-icon { font-size: 18px; margin-bottom: 4px; }
+  .stage-name { font-weight: 500; color: var(--color-text-primary); margin-bottom: 2px; }
+  .stage-sub { color: var(--color-text-secondary); font-size: 11px; }
+  .stage.active { border-color: transparent; }
+  .stage-warn { font-size: 12px; color: var(--color-text-secondary); margin-top: 0.4rem; text-align: right; }
+  h2.demo-title { font-size: 18px; font-weight: 500; color: var(--color-text-primary); margin: 0 0 0.25rem; }
+  p.demo-sub { font-size: 13px; color: var(--color-text-secondary); margin: 0 0 1.25rem; }
+</style>
+
+<div class="demo-wrap">
+  <h2 class="sr-only">Power-independent wastewater system interactive demo</h2>
+  <h2 class="demo-title">Power-independent wastewater system demo</h2>
+  <p class="demo-sub">This demo illustrates how the system responds to variable loading conditions.</p>
+
+  <div class="section-card">
+    <div class="label-row">
+      <span class="slider-label">Population</span>
+      <span class="slider-val"><span id="pop-val">50</span> people</span>
+    </div>
+    <input type="range" min="0" max="200" step="1" value="50" id="pop-slider">
+
+    <div class="label-row">
+      <span class="slider-label">Daily water usage per person</span>
+      <span class="slider-val"><span id="usage-val">120</span> L/person</span>
+    </div>
+    <input type="range" min="0" max="200" step="1" value="120" id="usage-slider">
+  </div>
+
+  <div class="metrics">
+    <div class="metric">
+      <div class="metric-label">Total daily flow</div>
+      <div class="metric-value" id="flow-val">6,000</div>
+      <div style="font-size:12px;color:var(--color-text-secondary);">L/day</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">System capacity</div>
+      <div class="metric-value">15,000</div>
+      <div style="font-size:12px;color:var(--color-text-secondary);">L/day</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Load used</div>
+      <div class="metric-value" id="pct-val">40%</div>
+      <div style="font-size:12px;color:var(--color-text-secondary);">of capacity</div>
+    </div>
+  </div>
+
+  <div class="section-card" style="padding-bottom:1rem;">
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px;">System load</div>
+    <div class="bar-track">
+      <div class="bar-fill" id="bar" style="width:40%;background:#3B6D11;"></div>
+    </div>
+    <div class="bar-labels">
+      <span>0</span>
+      <span style="position:relative;left:0">Warning 12,000</span>
+      <span>Max 15,000</span>
+    </div>
+    <div class="status-box" id="status-box" style="margin-top:1rem;background:#EAF3DE;color:#27500A;">
+      Normal operation
+    </div>
+    <div class="stage-row" id="stages">
+      <div class="stage active" id="s1" style="background:#EAF3DE;border-color:#C0DD97;">
+        <div class="stage-icon">🌿</div>
+        <div class="stage-name">Screening</div>
+        <div class="stage-sub">Solids removed</div>
+      </div>
+      <div class="stage active" id="s2" style="background:#EAF3DE;border-color:#C0DD97;">
+        <div class="stage-icon">💧</div>
+        <div class="stage-name">Settling</div>
+        <div class="stage-sub">Gravity separation</div>
+      </div>
+      <div class="stage active" id="s3" style="background:#EAF3DE;border-color:#C0DD97;">
+        <div class="stage-icon">🦠</div>
+        <div class="stage-name">Biofilter</div>
+        <div class="stage-sub">Microbial treatment</div>
+      </div>
+      <div class="stage active" id="s4" style="background:#EAF3DE;border-color:#C0DD97;">
+        <div class="stage-icon">🌱</div>
+        <div class="stage-name">Wetland</div>
+        <div class="stage-sub">Passive polishing</div>
+      </div>
+    </div>
+    <div class="stage-warn" id="stage-warn"></div>
+  </div>
+</div>
+
+<script>
+const popSlider = document.getElementById('pop-slider');
+const usageSlider = document.getElementById('usage-slider');
+const popVal = document.getElementById('pop-val');
+const usageVal = document.getElementById('usage-val');
+const flowVal = document.getElementById('flow-val');
+const pctVal = document.getElementById('pct-val');
+const bar = document.getElementById('bar');
+const statusBox = document.getElementById('status-box');
+const stageWarn = document.getElementById('stage-warn');
+const stages = [1,2,3,4].map(i => document.getElementById('s'+i));
+
+const CAP = 15000, WARN = 12000;
+
+const STATE = {
+  normal:   { bg:'#EAF3DE', text:'#27500A', barColor:'#3B6D11', label:'Normal operation' },
+  warning:  { bg:'#FAEEDA', text:'#633806', barColor:'#EF9F27', label:'Approaching capacity' },
+  overload: { bg:'#FCEBEB', text:'#501313', barColor:'#E24B4A', label:'Overload – fail-soft mode activated' },
+};
+
+const STAGE_NORMAL   = { bg:'#EAF3DE', border:'#C0DD97' };
+const STAGE_WARN     = { bg:'#FAEEDA', border:'#FAC775' };
+const STAGE_OVERLOAD = { bg:'#FCEBEB', border:'#F7C1C1' };
+const STAGE_OFF      = { bg:'var(--color-background-secondary)', border:'var(--color-border-tertiary)' };
+
+function update() {
+  const pop   = parseInt(popSlider.value);
+  const usage = parseInt(usageSlider.value);
+  const flow  = pop * usage;
+  const pct   = Math.min(flow / CAP, 1);
+
+  popVal.textContent   = pop;
+  usageVal.textContent = usage;
+  flowVal.textContent  = flow.toLocaleString();
+  pctVal.textContent   = Math.round(pct * 100) + '%';
+  bar.style.width      = (pct * 100) + '%';
+
+  let s, stageStyle, warnMsg = '';
+  if (flow < WARN) {
+    s = STATE.normal; stageStyle = STAGE_NORMAL;
+  } else if (flow <= CAP) {
+    s = STATE.warning; stageStyle = STAGE_WARN;
+    warnMsg = 'Reduce load or expand capacity soon';
+  } else {
+    s = STATE.overload;
+    warnMsg = 'Overflow bypass active — partial treatment only';
+  }
+
+  statusBox.style.background = s.bg;
+  statusBox.style.color      = s.text;
+  statusBox.textContent      = s.label;
+  bar.style.background       = s.barColor;
+
+  stages.forEach((el, i) => {
+    let st = stageStyle;
+    if (flow > CAP) {
+      st = i < 2 ? STAGE_OVERLOAD : STAGE_OFF;
+    }
+    el.style.background  = st.bg;
+    el.style.borderColor = st.border;
+  });
+  stageWarn.textContent = warnMsg;
+}
+
+popSlider.addEventListener('input', update);
+usageSlider.addEventListener('input', update);
+update();
+</script>
